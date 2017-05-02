@@ -174,18 +174,22 @@ def load():
 	global g_key1, g_key2
 	# Vérification de la pré-existence du menu
 	if not sp.window.menus['say'] :
-		menu_say = sp.window.menus.add(label = "Assistance vocale", action=None, index=3, submenu=True, name="say")
-		# les modes de lecture des en-têtes de ligne
-		menu_line_headings = menu_say.add(label = "Lecture des entêtes de &lignes", submenu = True, name = "lineHeadings")
-		menu_line_headings.add(label = "Ne &rien dire", action = sayNothing, name = "nothing")
-		menu_line_headings.add(label = "Dire les &indentations", action = sayIndentation, name = "indentation")
-		menu_line_headings.add(label = "Dire les ni&veaux", action = sayLevel, name = "level")
-		menu_line_headings.add(label = "&Basculer le mode de lecture des entêtes de ligne", action = toggleMode, name = "toggleMode", accelerator = "CTRL+SHIFT+i")
-		menu_line_headings.indentation.checked = True
-		# lecture du niveau d'indentation courant
-		menu_say.add(label = "Lire le niveau d'&indentation courant", action = sayCurIndentLevel, name = "sayCurrentIndentLevel", accelerator = "CTRL+i")
-		# lecture de l'indentation seulement si changement
-		menuReadIndentOnlyWhenChange = menu_say.add(label = "Activer la lecture du niveau d'&indentation seulement si changement", accelerator = "ALT+i", action = readIndentOnlyWhenChange)
+		menu_say = sp.window.menus.add(label = "Assistance &vocale", action=None, index=2, submenu=True, name="say")
+	else :
+		menu_say = sp.window.menus['say']
+	# les modes de lecture des en-têtes de ligne
+	menu_line_headings = menu_say.add(label = "Lecture des entêtes de &lignes", submenu = True, name = "lineHeadings")
+	menu_line_headings.add(label = "Ne &rien dire", action = sayNothing, name = "nothing")
+	menu_line_headings.add(label = "Dire les &indentations", action = sayIndentation, name = "indentation")
+	menu_line_headings.add(label = "Dire les ni&veaux", action = sayLevel, name = "level")
+	menu_line_headings.add(label = "&Basculer le mode de lecture des entêtes de ligne", action = toggleMode, name = "toggleMode", accelerator = "CTRL+SHIFT+i")
+	menu_line_headings.indentation.checked = True
+	# lecture du niveau d'indentation courant
+	menu_say.add(label = "Lire le niveau d'&indentation courant", action = sayCurIndentLevel, name = "sayCurrentIndentLevel", accelerator = "CTRL+i")
+	# lecture de l'indentation seulement si changement
+	menuReadIndentOnlyWhenChange = menu_say.add(label = "Activer la lecture du niveau d'&indentation seulement si changement", accelerator = "ALT+i", action = readIndentOnlyWhenChange)
+	
+	# Ajout des événement pour capter les keyUp
 	sp.window.addEvent("pageOpened", load_page_events)
 	# Et on l'appel pour cette page
 	load_page_events(sp.window.curPage)
