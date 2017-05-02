@@ -3,7 +3,7 @@
 import sixpad as sp
 
 # Variables globales.
-mode = 0
+mode = 2
 read_indent_if_dif = 1
 lastDifferentIndentLevel = 0
 
@@ -13,6 +13,58 @@ def sayCurIndentLevel():
 	sp.say("Niveau " + str(page.lineIndentLevel(page.curLine)) +". ")
 # end def
 
+def getLineHeading(line):
+	indentation = getIndentation() + ". "
+	level = "niveau " + str(sp.window.curPage.lineIndentLevel(line)) + ". "
+	if mode == 0:
+		return sp.window.curPage.line(line)
+	elif mode == 1:
+		return indentation + sp.window.curPage.line(line)
+	elif mode == 2:
+		return level + sp.window.curPage.line(line)
+# end def
+
+
+def getIndentation():
+	iIndent = 0
+	sIndent = ""
+	if sp.window.curPage.line(sp.window.curPage.curLine) == "":
+		return "Vide"
+	if sp.window.curPage.lineStartOffset(sp.window.curPage.curLine) != sp.window.curPage.lineSafeStartOffset(sp.window.curPage.curLine):
+		iFirstChar = sp.window.curPage.lineStartOffset(sp.window.curPage.curLine)
+		sIndentChar = sp.window.curPage.text[iFirstChar]
+		if sIndentChar == " ":
+			sMarker =  " espaces"
+		elif sIndentChar == "\t":
+			sMarker = " tabs"
+		sTemp = sp.window.curPage.line(sp.window.curPage.curLine)
+		i = 100
+		while len(sTemp) > 0 and i > 0:
+			i -= 1
+			sFirstChar = sTemp[:1]
+			sTemp = sTemp[1:]
+			if sFirstChar != " " and sFirstChar != "\t":
+				sIndent = sIndent + "|" + str(iIndent) + sMarker
+				return sIndent[1:]
+			if sFirstChar == sIndentChar:
+				iIndent += 1
+			else:
+				sIndent = sIndent + "|" + str(iIndent) + sMarker
+				iIndent = 1
+				sIndentChar = sFirstChar
+				if sMarker == " espaces":
+					sMarker = " tabs"
+				else:
+					sMarker = " espaces"
+		if iIndent != 0:
+			sIndent = sIndent + "|" + str(iIndent) + sMarker
+		if i == 0:
+			return ""
+		return sIndent[1:]
+	else:
+		return ""
+
+
 def readIndentOnlyWhenChange():
 	""" activate or deactivate the reading  of indents if change """
 	global menuReadIndentOnlyWhenChange
@@ -21,10 +73,10 @@ def readIndentOnlyWhenChange():
 	# bug #menuReadIndentOnlyWhenChange.checked = not(menuReadIndentOnlyWhenChange.checked)
 	read_indent_if_dif = not(read_indent_if_dif)
 	if read_indent_if_dif :
-		sayLevel()
+		#sayLevel()
 		sp.say("Activation de la lecture du niveau d'indentation si changement")
 	else:
-		sayNothing()
+		#sayNothing()
 		sp.say("Désactivation de la lecture du niveau d'indentation si changement")
 	# end if
 	lastDifferentIndentLevel = sp.window.curPage.lineIndentLevel(sp.window.curPage.curLine)
@@ -65,7 +117,7 @@ def sayLevel ():
 	menu_line_headings.level.checked = True
 
 def onKeyDown(page, vk):
-	# sp.say(str(vk))
+	#sp.say(str(vk))
 	# si la touche est FLH, CTRL+FLH, CTRL+HOME, PGUp
 	if vk in[38, 550, 548, 33]:
 		# et qu'on est à la première ligne
@@ -82,34 +134,37 @@ def onKeyDown(page, vk):
 def onKeyUp(page, vk):
 	global lastDifferentIndentLevel
 	# Pour les touches tab et Shift + Tab.
-	if vk in [9, 1033] and page.position == page.lineSafeStartOffset(page.curLine) and not page.selectedText:
+	if vk in [9, 1033] and page.position <= page.lineSafeStartOffset(page.curLine) and not page.selectedText:
 		sp.say("Niveau " + str(page.lineIndentLevel(page.curLine)) + ". " + page.line(page.curLine), True)
 		return False
+	
 	# Pour la touche BackSpace.
-	if vk == 8 and not page.selectedText and page.position == page.lineSafeStartOffset(page.curLine):
-		# Si les paramètres d'indentation sont de 1 Tab ou de 1 espace, on donne le niveau.
-		if page.indentation in [0, 1]:
-			sp.say("Niveau " + str(page.lineIndentLevel(page.curLine)) + ". " + page.line(page.curLine), True)
-		else:
-			# Le niveau d'indentation est fixé sur plus d'une espace, on donne donc le nombre d'indentations.
-			sp.say(getIndentation() + ". " + page.line(page.curLine), True)
+	if vk == 8 and not page.selectedText: 
+		if page.position <= page.lineSafeStartOffset(page.curLine) :
+			# Si les paramètres d'indentation sont de 1 Tab ou de 1 espace, on donne le niveau.
+			if page.indentation in [0, 1]:
+				sp.say("Niveau " + str(page.lineIndentLevel(page.curLine)) + ". " + page.line(page.curLine), True)
+			else:
+				# Le niveau d'indentation est fixé sur plus d'une espace, on donne donc le nombre d'indentations.
+				sp.say(getIndentation() + ". " + page.line(page.curLine), True)
 		return False
+		
 	# Si la touche est FLH, FLB, CTRL+Home, CTRL+END, PGUp, PGDown, CTRL+Up, CTRL+Down.
-	# On donne les informations selon le mode de lecture d'entêtes utilisé.
+	# On donne les informations sur le mode de lecture d'entêtes utilisé.
 	if vk in[33, 34, 38, 40, 547, 548, 550, 552] and not page.selectedText:
-		if mode == 4 and menuReadIndentOnlyWhenChange.checked == True: # lecture des niveaux d'indentation
+		if read_indent_if_dif : 
+			# lecture des niveaux d'indentation si changement
 			if lastDifferentIndentLevel != page.lineIndentLevel(page.curLine):
 				sp.say(getLineHeading(page.curLine), True)
-				lastDifferentIndentLevel = page.lineIndentLevel(page.curLine)
-			else:
-				sp.say(page.curLineText, True)
 			# end if
+		# end if
 		else:
+			# On annonce tout le temps
 			sp.say(getLineHeading(page.curLine), True)
 		# end if
-		return False
-	# end if
-	retur# end def
+	lastDifferentIndentLevel = page.lineIndentLevel(page.curLine)
+	return True
+# end def
 
 
 
@@ -131,6 +186,13 @@ def load():
 		menu_say.add(label = "Lire le niveau d'&indentation courant", action = sayCurIndentLevel, name = "sayCurrentIndentLevel", accelerator = "CTRL+i")
 		# lecture de l'indentation seulement si changement
 		menuReadIndentOnlyWhenChange = menu_say.add(label = "Activer la lecture du niveau d'&indentation seulement si changement", accelerator = "ALT+i", action = readIndentOnlyWhenChange)
+	sp.window.addEvent("pageOpened", load_page_events)
+	# Et on l'appel pour cette page
+	load_page_events(sp.window.curPage)
+	
+def load_page_events(page) :
+	page.addEvent("keyDown", onKeyDown)
+	page.addEvent("keyUp", onKeyUp)
 # end def
 
 load()
