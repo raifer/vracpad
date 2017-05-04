@@ -136,7 +136,9 @@ def onKeyUp(page, vk):
 	# Pour les touches tab et Shift + Tab.
 	if vk in [9, 1033] and page.position <= page.lineSafeStartOffset(page.curLine) and not page.selectedText:
 		sp.say("Niveau " + str(page.lineIndentLevel(page.curLine)) + ". " + page.line(page.curLine), True)
-		return False
+		# Comme on a changé l'indentation, on met à jour la variable global
+		lastDifferentIndentLevel = page.lineIndentLevel(page.curLine)
+		return True
 	
 	# Pour la touche BackSpace.
 	if vk == 8 and not page.selectedText: 
@@ -147,19 +149,24 @@ def onKeyUp(page, vk):
 			else:
 				# Le niveau d'indentation est fixé sur plus d'une espace, on donne donc le nombre d'indentations.
 				sp.say(getIndentation() + ". " + page.line(page.curLine), True)
-		return False
-		
+			# end if
+			# Comme on a changé l'indentation, on met à jour la variable global
+			lastDifferentIndentLevel = page.lineIndentLevel(page.curLine)
+		# end if
+		return True
+	
+	# Lecture de l'indentation
 	# Si la touche est FLH, FLB, CTRL+Home, CTRL+END, PGUp, PGDown, CTRL+Up, CTRL+Down.
 	# On donne les informations sur le mode de lecture d'entêtes utilisé.
 	if vk in[33, 34, 38, 40, 547, 548, 550, 552] and not page.selectedText:
+		# lecture seulement sur changement
 		if read_indent_if_dif : 
-			# lecture des niveaux d'indentation si changement
 			if lastDifferentIndentLevel != page.lineIndentLevel(page.curLine):
 				sp.say(getLineHeading(page.curLine), True)
 			# end if
 		# end if
+		# Mode de lecture sans restriction
 		else:
-			# On annonce tout le temps
 			sp.say(getLineHeading(page.curLine), True)
 		# end if
 	lastDifferentIndentLevel = page.lineIndentLevel(page.curLine)
