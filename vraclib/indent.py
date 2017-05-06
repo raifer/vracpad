@@ -199,6 +199,8 @@ def load():
 	# Ajout des événement pour capter les keyUp
 	sp.window.addEvent("pageOpened", load_page_events)
 	# Et on l'appel pour cette page
+	import time
+	time.sleep(0.5)
 	load_page_events(sp.window.curPage)
 	
 def load_page_events(page) :
