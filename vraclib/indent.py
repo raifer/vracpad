@@ -115,21 +115,7 @@ def sayLevel ():
 	menu_line_headings.nothing.checked = False
 	menu_line_headings.indentation.checked = False
 	menu_line_headings.level.checked = True
-
-def onKeyDown(page, vk):
-	#sp.say(str(vk))
-	# si la touche est FLH, CTRL+FLH, CTRL+HOME, PGUp
-	if vk in[38, 550, 548, 33]:
-		# et qu'on est à la première ligne
-		if page.curLine == 0: sp.window.messageBeep(0)
-	# end if
-	# si la touche est FLB, CTRL+FLB, CTRL+END, PGDown
-	if vk in[40, 552, 547, 34]:
-		# et qu'on est à la dernière ligne
-		if page.curLine == page.lineCount - 1: sp.window.messageBeep(0)
-	# end if
-	return True
-# end def
+# end dev
 
 def onKeyUp(page, vk):
 	global lastDifferentIndentLevel
@@ -144,7 +130,7 @@ def onKeyUp(page, vk):
 	if vk == 8 and not page.selectedText: 
 		if page.position <= page.lineSafeStartOffset(page.curLine) :
 			# Si les paramètres d'indentation sont de 1 Tab ou de 1 espace, on donne le niveau.
-			if page.indentation in [0, 1]:
+			if page.indentation in[0, 1]:
 				sp.say("Niveau " + str(page.lineIndentLevel(page.curLine)) + ". " + page.line(page.curLine), True)
 			else:
 				# Le niveau d'indentation est fixé sur plus d'une espace, on donne donc le nombre d'indentations.
@@ -202,7 +188,6 @@ def load():
 	load_page_events(sp.window.curPage)
 	
 def load_page_events(page) :
-	page.addEvent("keyDown", onKeyDown)
 	page.addEvent("keyUp", onKeyUp)
 # end def
 
