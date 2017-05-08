@@ -5,6 +5,9 @@ page = sp.window.curPage
 
 def delete_word_backward():
 	"""Suprime le mots précédent ou le mots sous le curseur"""
+	# Liste des caractère spéciaux où stoper la suppression
+	char_stop = r""" .,:;!?=<>+-_)({}[]/\"'"""+"\n"
+	
 	# on identifie la position
 	pos = page.position
 	
@@ -20,9 +23,7 @@ def delete_word_backward():
 		return
 	# end if
 	
-	# On supprime juqsqu'à trouver un des caractère de cette liste :
-	char_stop = r""" =<>+-_)({}[]/\"'"""+"\n"
-	
+	# On supprime jusqu'à trouver un des caractère spéciaux
 	i = 2
 	while True : #pos-i >= 0
 		# Si on arrive au début du fichier on suprime jusque là.
