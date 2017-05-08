@@ -43,4 +43,4 @@ def delete_word_backward():
 # end def
 
 sp.window.addAccelerator(
-		'ALT+q', delete_word_backward)
+		'Alt+Backspace', delete_word_backward)
