@@ -5,8 +5,5 @@ from vraclib import bip
 from vraclib import del_line
 from vraclib import home
 from vraclib import del_word_backward
-#from vraclib import move_emacs
+from vraclib import move_emacs
 #from vraclib import untex
-
-import sixpad as sp
-sp.window.messageBeep(0)
