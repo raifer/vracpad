@@ -1,13 +1,14 @@
 # -*-coding:Utf-8 -*
 
 import sixpad as sp
-page = sp.window.curPage
+
 
 
 def move_up():
 	"""Move up one line and read it, 
 	return True if they position has changed, False otherwise"""
 	
+	page = sp.window.curPage
 	line, col = page.licol(page.position)
 	
 	if line == 0:
@@ -29,6 +30,7 @@ def move_down():
 	"""Go to the next line and read it, 
 	return True if they position has changed, False otherwise"""
 	
+	page = sp.window.curPage
 	line, col = page.licol(page.position)
 	
 	if line == page.lineCount-1:

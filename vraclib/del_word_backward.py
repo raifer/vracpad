@@ -1,10 +1,12 @@
 # -*-coding:Utf-8 -*
 
 import sixpad as sp
-page = sp.window.curPage
+
 
 def delete_word_backward():
 	"""Suprime le mots précédent ou le mots sous le curseur"""
+	
+	page = sp.window.curPage
 	# Liste des caractère spéciaux où stoper la suppression
 	char_stop = r""" .,:;!?=<>+-_)({}[]/\"'"""+"\n"
 	
