@@ -69,6 +69,13 @@ def move_start():
 	if (page.textLength) : sp.say(page.text[page.position], True)
 	else : sp.say("vide");
 
+def move_end():
+	page = sp.window.curPage
+	page.position = page.lineEndOffset(page.curLine)
+	if (page.textLength) : sp.say(page.text[page.position-1], True)
+	else : sp.say("vide");
+
+
 
 
 # Main
@@ -94,4 +101,7 @@ sp.window.addAccelerator(
 item_select_all = sp.window.menus['edit']['selectAll'] #['select all']
 item_select_all.accelerator = "ALT+a"
 
+# Move end : CTRL e
+sp.window.addAccelerator(
+		'CTRL+e', move_end)
 
